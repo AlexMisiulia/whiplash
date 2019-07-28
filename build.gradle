@@ -5,6 +5,7 @@ buildscript {
 
     ext {
         retrofit_version = '2.6.0'
+        dagger_version = '2.24'
     }
     repositories {
         google()
