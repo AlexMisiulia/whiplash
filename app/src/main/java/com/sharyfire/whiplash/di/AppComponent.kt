@@ -1,6 +1,6 @@
 package com.sharyfire.whiplash.di
 
-import com.sharyfire.whiplash.MainActivity
+import com.sharyfire.whiplash.feature.photolist.PhotoListActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -8,5 +8,5 @@ import javax.inject.Singleton
 @Singleton
 interface AppComponent {
 
-    fun inject(mainActivity: MainActivity)
+    fun inject(photoListActivity: PhotoListActivity)
 }

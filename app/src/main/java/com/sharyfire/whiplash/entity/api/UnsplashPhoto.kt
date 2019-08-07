@@ -1,4 +1,4 @@
-package com.sharyfire.whiplash.entity
+package com.sharyfire.whiplash.entity.api
 
 data class UnsplashPhoto(
     val alt_description: String,

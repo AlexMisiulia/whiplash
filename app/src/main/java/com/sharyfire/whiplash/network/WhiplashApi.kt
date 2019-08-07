@@ -1,6 +1,6 @@
 package com.sharyfire.whiplash.network
 
-import com.sharyfire.whiplash.entity.UnsplashPhoto
+import com.sharyfire.whiplash.entity.api.UnsplashPhoto
 import io.reactivex.Observable
 import retrofit2.http.GET
 

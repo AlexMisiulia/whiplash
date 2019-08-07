@@ -1,13 +1,13 @@
-package com.sharyfire.whiplash.entity
+package com.sharyfire.whiplash.entity.api
 
-data class SponsoredBy(
+data class User(
     val accepted_tos: Boolean,
     val bio: String,
     val first_name: String,
     val id: String,
     val instagram_username: String,
     val last_name: String,
-    val links: Links,
+    val links: LinksX,
     val location: String,
     val name: String,
     val portfolio_url: String,
