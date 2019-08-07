@@ -4,7 +4,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.sharyfire.whiplash.entity.api.UnsplashPhoto
 import com.sharyfire.whiplash.entity.api.Urls
 import com.sharyfire.whiplash.entity.ui.DisplayablePhoto
-import com.sharyfire.whiplash.network.WhiplashApi
 import io.reactivex.Observable
 import org.junit.Assert
 import org.junit.Test
@@ -21,18 +20,18 @@ class PhotoListViewModelTest {
     @Rule @JvmField
     val schedulersRule = RxImmediateSchedulerRule()
 
-    private val api = mock(WhiplashApi::class.java)
+    private val getPhotos = mock(GetPhotos::class.java)
     private lateinit var viewModel: PhotoListViewModel
 
     private fun initViewModel() {
-        viewModel = PhotoListViewModel(api)
+        viewModel = PhotoListViewModel(getPhotos)
     }
 
     @Test
     fun `display photos received from api`() {
         // arrange
         val apiList = listOf(UnsplashPhoto(Urls("full", "raw", "photoUrl", "small", "thumb")))
-        `when`(api.getPhotos()).thenReturn(Observable.just(apiList))
+        `when`(getPhotos.execute()).thenReturn(Observable.just(apiList))
 
         // act
         initViewModel()

@@ -5,16 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.sharyfire.whiplash.entity.ui.DisplayablePhoto
-import com.sharyfire.whiplash.network.WhiplashApi
 import com.sharyfire.whiplash.utils.addToCompositeDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 private const val TAG = "PhotoListViewModel"
 
-class PhotoListViewModel @Inject constructor(private val api: WhiplashApi) : ViewModel() {
+class PhotoListViewModel @Inject constructor(private val getPhotos: GetPhotos) : ViewModel() {
     private val _screenState = MutableLiveData<ScreenState>()
 
     private val compositeDisposable = CompositeDisposable()
@@ -26,9 +23,7 @@ class PhotoListViewModel @Inject constructor(private val api: WhiplashApi) : Vie
 
     private fun loadPhotos() {
 
-        api.getPhotos()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        getPhotos.execute()
             .subscribe({
                 val displayablePhotos = it.map { photo -> DisplayablePhoto(photo.urls.regular) }
                 _screenState.value = ScreenState(displayablePhotos)

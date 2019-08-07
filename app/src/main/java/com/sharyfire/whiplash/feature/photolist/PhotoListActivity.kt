@@ -26,7 +26,6 @@ class PhotoListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         Injector.appComponent.inject(this)
-
         initView()
         initViewModel()
     }
