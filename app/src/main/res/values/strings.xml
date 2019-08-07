@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Whiplash</string>
     <string name="error_msg">Error occurs, would you like to try again?</string>
+    <string name="critical_error_msg">Somethings goes wrong, please contact developer</string>
     <string name="retry">Retry</string>
     <string name="cancel">Cancel</string>
 </resources>

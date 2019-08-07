@@ -1,5 +1,7 @@
 package com.sharyfire.whiplash.entity.api
 
 data class UnsplashPhoto(
-    val urls: Urls
+    val id: String,
+    val urls: Urls,
+    val user: User
 )

@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.sharyfire.whiplash.R
-import com.sharyfire.whiplash.entity.ui.DisplayablePhoto
 import com.squareup.picasso.Picasso
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.photo_item_view.*
@@ -23,7 +22,8 @@ private val diffUtilCallback = object: DiffUtil.ItemCallback<DisplayablePhoto>()
 
 }
 
-class PhotoAdapter : ListAdapter<DisplayablePhoto, PhotoAdapter.PhotoViewHolder>(
+class PhotoAdapter(private val onClick: (DisplayablePhoto) -> Unit) :
+    ListAdapter<DisplayablePhoto, PhotoAdapter.PhotoViewHolder>(
     diffUtilCallback
 ) {
 
@@ -36,7 +36,13 @@ class PhotoAdapter : ListAdapter<DisplayablePhoto, PhotoAdapter.PhotoViewHolder>
         holder.bind(getItem(position))
     }
 
-    class PhotoViewHolder(override val containerView: View): RecyclerView.ViewHolder(containerView), LayoutContainer {
+    inner class PhotoViewHolder(override val containerView: View): RecyclerView.ViewHolder(containerView), LayoutContainer {
+        init {
+            containerView.setOnClickListener {
+                onClick(getItem(adapterPosition))
+            }
+        }
+
         fun bind(item: DisplayablePhoto) {
             Picasso.get().load(item.url).into(imageView)
         }

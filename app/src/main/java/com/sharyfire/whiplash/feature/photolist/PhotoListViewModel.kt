@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.sharyfire.whiplash.entity.ui.DisplayablePhoto
 import com.sharyfire.whiplash.utils.addToCompositeDisposable
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
@@ -12,15 +11,15 @@ import javax.inject.Inject
 private const val TAG = "PhotoListViewModel"
 
 class PhotoListViewModel @Inject constructor(private val getPhotos: GetPhotos) : ViewModel() {
-
     data class ScreenState(
         val displayablePhotos: List<DisplayablePhoto>,
         val isLoading: Boolean,
+        val isSwipeRefresh: Boolean,
         val isError: Boolean
     )
 
     private val _screenState = MutableLiveData<ScreenState>()
-        .apply { value = ScreenState(emptyList(), isLoading = false, isError = false) }
+        .apply { value = ScreenState(emptyList(), isLoading = false, isError = false, isSwipeRefresh = false) }
 
     private val compositeDisposable = CompositeDisposable()
     val screenState: LiveData<ScreenState> get() = _screenState
@@ -29,17 +28,22 @@ class PhotoListViewModel @Inject constructor(private val getPhotos: GetPhotos) :
         loadPhotos()
     }
 
-    fun loadPhotos() {
-        setState(getCurrState().copy(isLoading = true))
+    fun loadPhotos(isSwipeRefresh: Boolean = false) {
+        setState(getCurrState().copy(isSwipeRefresh = isSwipeRefresh, isLoading = !isSwipeRefresh, isError = false))
 
         getPhotos.execute()
             .subscribe({
-                val displayablePhotos = it.map { photo -> DisplayablePhoto(photo.urls.regular) }
-                setState(getCurrState().copy(displayablePhotos = displayablePhotos, isLoading = false))
+                val displayablePhotos = it.map { photo ->
+                    DisplayablePhoto(
+                        photo.urls.regular,
+                        photo.id
+                    )
+                }
+                setState(getCurrState().copy(displayablePhotos = displayablePhotos, isLoading = false, isSwipeRefresh = false))
 
             }, {
                 Log.e(TAG, "error during getting photos", it)
-                setState(getCurrState().copy(isLoading = false, isError = true))
+                setState(getCurrState().copy(isLoading = false, isSwipeRefresh = false, isError = true))
             })
             .addToCompositeDisposable(compositeDisposable)
     }
