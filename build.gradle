@@ -9,6 +9,7 @@ buildscript {
         rxandroid_version = '2.1.1'
         picasso_version = '2.71828'
         recycler_version = '1.0.0'
+        lifecycle_version = '2.0.0'
     }
     repositories {
         google()
