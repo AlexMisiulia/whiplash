@@ -4,8 +4,7 @@ import android.content.Context
 
 object Injector {
     private lateinit var _appComponent: AppComponent
-    val appComponent: AppComponent
-        get() = _appComponent
+    val appComponent: AppComponent get() = _appComponent
 
     fun init(context: Context) {
         _appComponent = DaggerAppComponent

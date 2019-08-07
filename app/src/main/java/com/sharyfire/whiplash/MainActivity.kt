@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.sharyfire.whiplash.di.Injector
-import com.sharyfire.whiplash.entity.UnsplashPhoto
 import com.sharyfire.whiplash.network.WhiplashApi
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 private const val TAG = "MainActivity"
@@ -24,16 +22,15 @@ class MainActivity : AppCompatActivity() {
         Injector.appComponent.inject(this)
 
 
-        whiplashApi.getPhotos().enqueue(object: Callback<List<UnsplashPhoto>> {
-            override fun onFailure(call: Call<List<UnsplashPhoto>>, t: Throwable) {
-                Log.e(TAG, "error during getting photos", t)
-            }
+        whiplashApi.getPhotos()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+            Log.d(TAG, "Success response = $it")
 
-            override fun onResponse(
-                    call: Call<List<UnsplashPhoto>>, response: Response<List<UnsplashPhoto>>
-            ) {
-                Log.d(TAG, "Success response = ${response.body()}")
-            }
+        }, {
+            Log.e(TAG, "error during getting photos", it)
+
         })
     }
 }
