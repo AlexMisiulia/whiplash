@@ -15,13 +15,14 @@ import javax.inject.Inject
 private const val TAG = "PhotoListViewModel"
 
 class PhotoListViewModel @Inject constructor(private val api: WhiplashApi) : ViewModel() {
-    private val _screenState by lazy {
-        loadPhotos()
-        MutableLiveData<ScreenState>()
-    }
+    private val _screenState = MutableLiveData<ScreenState>()
 
     private val compositeDisposable = CompositeDisposable()
     val screenState: LiveData<ScreenState> get() = _screenState
+
+    init {
+        loadPhotos()
+    }
 
     private fun loadPhotos() {
 
