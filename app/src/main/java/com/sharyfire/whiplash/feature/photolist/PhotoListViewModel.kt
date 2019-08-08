@@ -18,8 +18,14 @@ class PhotoListViewModel @Inject constructor(private val getPhotos: GetPhotos) :
         val isError: Boolean
     )
 
-    private val _screenState = MutableLiveData<ScreenState>()
-        .apply { value = ScreenState(emptyList(), isLoading = false, isError = false, isSwipeRefresh = false) }
+    private val _screenState = MutableLiveData<ScreenState>().apply{
+        value = ScreenState(
+            emptyList(),
+            isLoading = false,
+            isError = false,
+            isSwipeRefresh = false
+        )
+    }
 
     private val compositeDisposable = CompositeDisposable()
     val screenState: LiveData<ScreenState> get() = _screenState
