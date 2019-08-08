@@ -38,8 +38,15 @@ class PhotoListViewModel @Inject constructor(private val getPhotos: GetPhotos) :
         loadPhotos()
     }
 
+    fun refreshPhotos() {
+        currentPaginationPage = 0
+        loadPhotos(isSwipeRefresh = true)
+    }
+
     fun loadMorePhotos() {
         currentPaginationPage++
+        Log.e(TAG, "loadMorePhotos, currentPage = $currentPaginationPage")
+
         loadPhotos()
     }
 

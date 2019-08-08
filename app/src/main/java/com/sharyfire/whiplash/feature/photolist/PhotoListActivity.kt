@@ -67,7 +67,7 @@ class PhotoListActivity : AppCompatActivity() {
         photosRecyclerView.addOnScrollListener(endlessScrollListener)
 
         swipeRefresh.setOnRefreshListener {
-            viewModel.loadPhotos(isSwipeRefresh = true)
+            viewModel.refreshPhotos()
         }
     }
 }
