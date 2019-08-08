@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import com.sharyfire.whiplash.R
 import com.sharyfire.whiplash.utils.inflaterAdapterView
 
@@ -75,6 +73,8 @@ abstract class EndlessAdapter<Item: AdapterItem, Holder: RecyclerView.ViewHolder
     }
 
     fun setError(enableError: Boolean) {
+        Log.d(TAG, "setLoading=$enableError")
+
         val isError = isError()
 
         if(enableError) {
@@ -85,6 +85,8 @@ abstract class EndlessAdapter<Item: AdapterItem, Holder: RecyclerView.ViewHolder
     }
 
     fun setLoading(enableLoading: Boolean) {
+        Log.d(TAG, "setLoading=$enableLoading")
+
         val isLoading = isLoading()
 
         if(enableLoading) {
@@ -94,22 +96,40 @@ abstract class EndlessAdapter<Item: AdapterItem, Holder: RecyclerView.ViewHolder
         }
     }
 
-    fun isLoading() = this.items.find { it is LoadingFooter } != null
-    private fun isError() = this.items.find { it is ErrorFooter } != null
+    fun isLoading() = getLastItem() is LoadingFooter
+    private fun isError() = getLastItem() is ErrorFooter
+
+    private fun getLastItem(): AdapterItem? {
+        return if(itemCount != 0) {
+            getItem(itemCount - 1)
+        } else {
+            null
+        }
+    }
 
     private fun modifyItems(block: ArrayList<AdapterItem>.() -> Unit) {
-        block(items)
-        submitList(items)
+        val updatedItems = ArrayList(items)
+        block(updatedItems)
+        Log.d(TAG, "modifyItems, submit list =$updatedItems)")
+        submitListInternal(updatedItems)
     }
 
     fun submitContentList(items: List<Item>) {
         val wasLoading = isLoading()
         val wasError = isError()
 
+        val adapterItems = ArrayList<AdapterItem>()
+        adapterItems.addAll(items)
+        if(wasLoading) adapterItems.add(LoadingFooter)
+        if(wasError) adapterItems.add(LoadingFooter)
+
+        Log.d(TAG, "submitContentList=${adapterItems.size})")
+        submitListInternal(adapterItems)
+    }
+
+    private fun submitListInternal(items: List<AdapterItem>) {
         this.items.clear()
         this.items.addAll(items)
-        if(wasLoading) this.items.add(LoadingFooter)
-        if(wasError) this.items.add(LoadingFooter)
 
         submitList(items)
     }
