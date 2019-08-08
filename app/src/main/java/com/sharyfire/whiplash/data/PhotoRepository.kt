@@ -6,6 +6,6 @@ import javax.inject.Singleton
 
 @Singleton
 class PhotoRepository @Inject constructor(private val api: WhiplashApi) {
-    fun getPhotos() = api.getPhotos()
+    fun getPhotos(page: Int, perPage: Int) = api.getPhotos(page, perPage)
     fun getPhoto(id: String) = api.getPhoto(id)
 }

@@ -6,12 +6,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.sharyfire.whiplash.R
 import com.sharyfire.whiplash.di.Injector
 import com.sharyfire.whiplash.di.ViewModelFactory
 import com.sharyfire.whiplash.feature.photodetails.PhotoDetailsActivity
-import com.sharyfire.whiplash.utils.setVisible
 import kotlinx.android.synthetic.main.activity_photo_list.*
 import javax.inject.Inject
 
@@ -21,6 +19,8 @@ class PhotoListActivity : AppCompatActivity() {
 
     @Inject lateinit var viewModelFactory: ViewModelFactory<PhotoListViewModel>
     lateinit var viewModel: PhotoListViewModel
+
+    private lateinit var endlessScrollListener: EndlessRecyclerViewScrollListener
 
     private val adapter = PhotoAdapter{
         val startIntent = PhotoDetailsActivity.getStartIntent(this, it.id)
@@ -44,23 +44,28 @@ class PhotoListActivity : AppCompatActivity() {
     }
 
     private fun render(state: PhotoListViewModel.ScreenState) {
-        adapter.submitList(state.displayablePhotos)
-        progressBar.setVisible(state.isLoading)
+        adapter.submitContentList(state.displayablePhotos)
+        adapter.setLoading(state.isLoading)
+        adapter.setError(state.isError)
 
         swipeRefresh.isRefreshing = state.isSwipeRefresh
-
-        if (state.isError) {
-            Snackbar.make(findViewById(android.R.id.content), R.string.error_msg, Snackbar.LENGTH_SHORT)
-                .setAction(R.string.retry) {
-                    viewModel.loadPhotos()
-                }
-                .show()
-        }
     }
 
     private fun initView() {
         photosRecyclerView.adapter = adapter
-        photosRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        val linearLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        photosRecyclerView.layoutManager = linearLayoutManager
+
+        endlessScrollListener = object: EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+                if(!adapter.isLoading()) {
+                    viewModel.loadMorePhotos()
+                }
+            }
+        }
+
+        photosRecyclerView.addOnScrollListener(endlessScrollListener)
+
         swipeRefresh.setOnRefreshListener {
             viewModel.loadPhotos(isSwipeRefresh = true)
         }
