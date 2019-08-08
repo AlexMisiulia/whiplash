@@ -10,6 +10,7 @@ import io.reactivex.schedulers.TestScheduler
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito.mock
+import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 
 class PhotoListViewModelTest : BaseViewModelTest() {
@@ -27,7 +28,7 @@ class PhotoListViewModelTest : BaseViewModelTest() {
     }
 
     @Test
-    fun `display photos received from api`() {
+    fun `set data state when success response from useCase`() {
         // arrange
         val apiList = listOf(UnsplashPhoto(id = "id",urls = Urls(regular = "photoUrl")))
         mockGetPhotosResponse(apiList)
@@ -48,6 +49,25 @@ class PhotoListViewModelTest : BaseViewModelTest() {
         )
 
         Assert.assertEquals(expected, screenStateObserver.values)
+    }
+
+    @Test
+    fun `set error state when success response from useCase`() {
+        // arrange
+        whenever(getPhotos.execute()).thenReturn(Observable.fromCallable { throw RuntimeException() })
+
+        // act
+        initViewModel()
+
+        // assert
+        val expected = PhotoListViewModel.ScreenState(
+            emptyList(),
+            isLoading = false,
+            isSwipeRefresh = false,
+            isError = true
+        )
+
+        Assert.assertEquals(expected, viewModel.screenState.value)
     }
 
     private fun mockGetPhotosResponse(photoList: List<UnsplashPhoto>) {

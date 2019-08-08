@@ -51,18 +51,13 @@ class PhotoDetailsViewModelTest: BaseViewModelTest() {
         // arrange
         whenever(getPhoto.execute(photoId)).thenReturn(Observable.fromCallable { throw RuntimeException()})
         initViewModel()
-        screenStateObserver = LiveDataTestObserver(viewModel.screenState)
 
         // act
         viewModel.init(photoId)
 
         // assert
-        val result = screenStateObserver.values
-        val expected = listOf(
-            PhotoDetailsViewModel.ScreenState(isLoading = false),
-            PhotoDetailsViewModel.ScreenState(isLoading = true, errorType = null),
-            PhotoDetailsViewModel.ScreenState(isLoading = false, errorType = PhotoDetailsViewModel.ErrorType.GENERAL_ERROR)
-        )
+        val result = viewModel.screenState.value
+        val expected = PhotoDetailsViewModel.ScreenState(isLoading = false, errorType = PhotoDetailsViewModel.ErrorType.GENERAL_ERROR)
         assertEquals(result, expected)
     }
 
@@ -70,17 +65,14 @@ class PhotoDetailsViewModelTest: BaseViewModelTest() {
     fun `set error state when photoId is invalid`() {
         // arrange
         initViewModel()
-        screenStateObserver = LiveDataTestObserver(viewModel.screenState)
 
         // act
         viewModel.init(null)
 
         // assert
-        val result = screenStateObserver.values
-        val expected = listOf(
-            PhotoDetailsViewModel.ScreenState(isLoading = false),
-            PhotoDetailsViewModel.ScreenState(isLoading = false, errorType = PhotoDetailsViewModel.ErrorType.FINISH_SCREEN)
-        )
+        val result = viewModel.screenState.value
+        val expected = PhotoDetailsViewModel.ScreenState(isLoading = false, errorType = PhotoDetailsViewModel.ErrorType.FINISH_SCREEN)
+
         assertEquals(result, expected)
     }
 }
