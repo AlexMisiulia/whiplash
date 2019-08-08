@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.sharyfire.whiplash.R
-import com.squareup.picasso.Picasso
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.photo_item_view.*
 
@@ -44,7 +44,7 @@ class PhotoAdapter(private val onClick: (DisplayablePhoto) -> Unit) :
         }
 
         fun bind(item: DisplayablePhoto) {
-            Picasso.get().load(item.url).into(imageView)
+            Glide.with(containerView.context).load(item.url).into(imageView)
         }
 
     }
